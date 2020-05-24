@@ -1,0 +1,24 @@
+name: Gradual Black Formatter
+author: Rocio Aramberri
+description: Gradually runs the black formatter on your codebase starting from the files that were last modified longer ago.
+
+runs:
+  using: docker
+  image: Dockerfile
+
+inputs:
+  number_of_files:
+    description: Number of files to which the black formatter should be applied at once.
+    default: 1
+  ignore_files_regex:
+    description: List of files that should be ignored divided by comma.
+
+outputs:
+  number_of_modified_files:
+    description: The number of files that were modified.
+  modified_file_names:
+    description: Modified files divided by comma.
+
+branding:
+  icon: trending-up
+  color: gray-dark
