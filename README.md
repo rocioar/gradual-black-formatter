@@ -23,13 +23,13 @@ target_version = ['py38']
   uses: rocioar/gradual-black-formatter@v1
   with:
     number_of_files: 10
-    ignore_files: test,migrations
+    ignore_files_regex: test,migrations
 ```
 
 Parameters:
 
 - **number_of_files**: Using this parameter you can specify on how many files you would like black to be applied.
-- **ignore_files**: Using this parameter you can specify filenames that you would like to ignore.
+- **ignore_files_regex**: Using this parameter you can specify filenames that you would like to ignore.
 
 ### Example workflow
 
