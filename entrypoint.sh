@@ -30,7 +30,7 @@ run_black_on_oldest_files() {
 modified_files=`run_black_on_oldest_files`
 
 modified_file_names=`echo $modified_files | sed $'s/ /, /g'`
-echo "::set-env name=MODIFIED_FILE_NAMES::$modified_file_names"
+echo "::set-output name=modified_file_names::$modified_file_names"
 
 number_of_modified_files=`echo $modified_files | wc -w`
-echo "::set-env name=NUMBER_OF_MODIFIED_FILES::$number_of_modified_files"
+echo "::set-output name=number_of_modified_files::$number_of_modified_files"

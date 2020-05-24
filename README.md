@@ -41,7 +41,7 @@ on:
     types: [closed]
 
 jobs:
-  build:
+  apply-black:
     if: github.head_ref == 'black'
     runs-on: ubuntu-latest
     steps:
@@ -49,19 +49,20 @@ jobs:
         with:
           ref: master
       - name: Apply Black Gradually
+        id: black
         uses: rocioar/gradual-black-formatter@v1
         with:
-          number_of_files: 10
-          ignore_files: test,migrations
+          number_of_files: 3
+          ignore_files_regex: test,migrations
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: Apply black to ${{ env.NUMBER_OF_MODIFIED_FILES }} files
+          commit-message: Apply black to ${{ steps.black.outputs.number_of_modified_files }} files
           committer: GitHub <noreply@github.com>
           author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
-          title: Apply black to ${{ env.NUMBER_OF_MODIFIED_FILES }} files
-          body: "Auto-generated PR that applies black to: ${{ env.MODIFIED_FILE_NAMES }}."
+          title: Apply black to ${{ steps.black.outputs.number_of_modified_files }} files
+          body: "Auto-generated PR that applies black to: ${{ steps.black.outputs.modified_file_names }}."
           branch: black
 ```
 
