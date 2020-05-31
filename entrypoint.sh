@@ -7,21 +7,26 @@ echo "========================"
 cd /github/workspace/
 
 run_black_on_oldest_files() {
-    ignore_files_regex=`echo $INPUT_IGNORE_FILES_REGEX | sed 's/ *, */|/g'`
+    ignore_files_regex=$(echo $INPUT_IGNORE_FILES_REGEX | tr "," "\n" | xargs -I {} echo '":!:{}"' | tr '"' "'")
+    filenames=$(
+        echo $ignore_files_regex | xargs git ls-files '*.py' |
+        while read filename; do
+            echo "$(git log -1 --format="%ai" -- $filename) $filename";
+        done |
+        sort |
+        cut -d " " -f4
+    )
 
-    git ls-tree -r --name-only HEAD | while read filename; do
-        if [ ${filename: -3} == ".py" ] && ! [[ $filename =~ $ignore_files_regex ]]
+    echo "$filenames" | while read filename; do
+        black --check $filename --quiet
+        if [ $? -eq 1 ]
         then
-            black --check $filename --quiet
-            if [ $? -eq 1 ]
+            let counter++
+            black $filename --quiet
+            echo $filename
+            if [ "$counter" -ge "$INPUT_NUMBER_OF_FILES" ]
             then
-                let counter++
-                black $filename --quiet
-                echo $filename
-                if [ "$counter" -ge "$INPUT_NUMBER_OF_FILES" ]
-                then
-                    break
-                fi
+                break
             fi
         fi
     done
