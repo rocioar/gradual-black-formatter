@@ -7,9 +7,9 @@ echo "========================"
 cd /github/workspace/
 
 run_black_on_oldest_files() {
-    ignore_files_regex=$(echo $INPUT_IGNORE_FILES_REGEX | tr "," "\n" | xargs -I {} echo '":!:{}"' | tr '"' "'")
+    ignore_files_regex=$(echo "$INPUT_IGNORE_FILES_REGEX" | tr "," "\n" | xargs -I {} echo '":!:{}"' | tr '"' "'")
     filenames=$(
-        echo $ignore_files_regex | xargs git ls-files '*.py' |
+        echo "$ignore_files_regex" | xargs git ls-files '*.py' |
         while read filename; do
             echo "$(git log -1 --format="%ai" -- $filename) $filename";
         done |
@@ -18,12 +18,12 @@ run_black_on_oldest_files() {
     )
 
     echo "$filenames" | while read filename; do
-        black --check $filename --quiet
+        black --check "$filename" --quiet
         if [ $? -eq 1 ]
         then
-            let counter++
-            black $filename --quiet
-            echo $filename
+            counter=$(( counter + 1 ))
+            black "$filename" --quiet
+            echo "$filename"
             if [ "$counter" -ge "$INPUT_NUMBER_OF_FILES" ]
             then
                 break
