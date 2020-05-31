@@ -48,12 +48,13 @@ jobs:
       - uses: actions/checkout@v2
         with:
           ref: master
+          fetch-depth: 0
       - name: Apply Black Gradually
         id: black
         uses: rocioar/gradual-black-formatter@v1
         with:
           number_of_files: 3
-          ignore_files_regex: test,migrations
+          ignore_files_regex: *test*,*migrations*
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v2
         with:
